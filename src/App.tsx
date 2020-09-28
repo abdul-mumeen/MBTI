@@ -1,23 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
 
 function App() {
+  const [welcomeMessage, setWelcomeMessage] = useState<string>("");
+
+  useEffect(() => {
+    fetch("/hello").then(async (response) => {
+      try {
+        const data = await response.json();
+        setWelcomeMessage(data.message);
+      } catch {
+        setWelcomeMessage("");
+      }
+    });
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <p>{welcomeMessage}</p>
       </header>
     </div>
   );

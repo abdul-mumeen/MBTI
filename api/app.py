@@ -6,4 +6,4 @@ app = Flask(__name__)
 
 @app.route('/hello')
 def get_welcome_message():
-    return {'message': 'Welcome to MBTI'}
+    return {'message': 'Welcome to MBTI!'}
