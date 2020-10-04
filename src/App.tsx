@@ -1,29 +1,26 @@
-import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-function App() {
-  const [welcomeMessage, setWelcomeMessage] = useState<string>("");
+import QuestionsPage from "./QuestionsPage";
+import ResultPage from "./ResultPage";
 
-  useEffect(() => {
-    fetch("/hello").then(async (response) => {
-      try {
-        const data = await response.json();
-        setWelcomeMessage(data.message);
-      } catch {
-        setWelcomeMessage("");
-      }
-    });
-  }, []);
+import "./index.scss";
 
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>{welcomeMessage}</p>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Switch>
+          <Route path="/result">
+            <ResultPage />
+          </Route>
+          <Route path="/">
+            <QuestionsPage />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
