@@ -162,7 +162,16 @@ def submit_answers():
 
 @app.route('/result')
 def retrieve_result():
-    return {'message': 'Welcome to MBTI!'}
+    data = request.json
+    email = data.get('email')
+    if not email:
+        return jsonify(message='Email is required!'), 404
+
+    user = db.session.query(User).filter_by(email=email).first()
+    if not user:
+        return jsonify(message=f'Result not found for user: {email}'), 404
+
+    return {'result': user.result.to_json()}
 
 
 if __name__ == '__main__':
