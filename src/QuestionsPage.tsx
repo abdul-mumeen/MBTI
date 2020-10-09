@@ -5,34 +5,36 @@ import Question from "./Question";
 import Email from "./Email";
 
 import "./index.scss";
+import { idText } from "typescript";
 
 const QuestionsPage = () => {
-  const [welcomeMessage, setWelcomeMessage] = useState<string>("");
+  const [questions, setQuestions] = useState<any[]>([]);
   const [data, setData] = useState<any>({});
 
   useEffect(() => {
-    fetch("/hello").then(async (response) => {
+    fetch("/questions").then(async (response) => {
       try {
         const data = await response.json();
-        setWelcomeMessage(data.message);
+        setQuestions(data.message);
+        console.log(data.message);
       } catch {
-        setWelcomeMessage("");
+        setQuestions([]);
       }
     });
   }, []);
 
-  const questions = [
-    "You find it takes effort to introduce yourself to other people",
-    "You consider yourself more practical than creative.",
-    "Winning a debate matters less to you than making sure no one gets upset.",
-    "You get energized going to social events that involve many interactions.",
-    "You often spend time exploring unrealistic and impractical yet intriguing ideas.",
-    "Deadlines seem to you to be of relative rather than absolute importance.",
-    "Logic is usually more important than heart when it comes to making important decisions.",
-    "Your home and work environments are quite tidy.",
-    "You do not mind being at the center of attention.",
-    "Keeping your options open is more important than having a to-do list.",
-  ];
+  // const questions = [
+  //   "You find it takes effort to introduce yourself to other people",
+  //   "You consider yourself more practical than creative.",
+  //   "Winning a debate matters less to you than making sure no one gets upset.",
+  //   "You get energized going to social events that involve many interactions.",
+  //   "You often spend time exploring unrealistic and impractical yet intriguing ideas.",
+  //   "Deadlines seem to you to be of relative rather than absolute importance.",
+  //   "Logic is usually more important than heart when it comes to making important decisions.",
+  //   "Your home and work environments are quite tidy.",
+  //   "You do not mind being at the center of attention.",
+  //   "Keeping your options open is more important than having a to-do list.",
+  // ];
 
   const perspectives = [
     { name: "EI", left: "Introversion (I)", right: "Extroversion (E)" },
@@ -68,9 +70,9 @@ const QuestionsPage = () => {
           {questions.map((question, index) => (
             <QuestionContainer key={index + 1}>
               <Question
-                questionKey={index.toString()}
+                questionKey={question.id.toString()}
                 updateValue={handleDataUpdate}
-                question={question}
+                question={question.question}
               />
             </QuestionContainer>
           ))}
