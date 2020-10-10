@@ -135,8 +135,17 @@ def submit_answers():
     if not answers or len(answers) != num_of_question:
         return jsonify(message='Answers are incomplete'), 400
 
-    user = User(email=email)
-    db.session.add(user)
+    user = db.session.query(User).filter_by(email=email).first()
+    if not user:
+        user = User(email=email)
+        db.session.add(user)
+    else:
+        db.session.query(Result).filter_by(id=user.result.id).delete()
+        [
+            db.session.query(Answer).filter_by(id=answer.id).delete()
+            for answer in user.answers
+        ]
+
     result = {}
     for answer in answers:
         question = db.session.query(Question).filter_by(
@@ -185,10 +194,3 @@ def retrieve_result():
         return jsonify(message=f'Result not found for user: {email}'), 404
 
     return {'result': user.result.to_json()}
-
-
-# if __name__ == '__main__':
-#     db.drop_all()
-#     db.create_all()
-#     write_questions_to_db()
-#     app.run()
