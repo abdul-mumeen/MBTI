@@ -1,6 +1,7 @@
 import time
 import csv
 import json
+import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
@@ -8,6 +9,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+APP_ROOT = os.path.realpath(os.path.dirname(__file__))
 
 
 class Question(db.Model):
@@ -80,7 +82,8 @@ class Result(db.Model):
 
 
 def write_questions_to_db():
-    with open('api/Data/Questions.csv') as csv_file:
+    questions_path = os.path.join(APP_ROOT, "Data", "Questions.csv")
+    with open(questions_path) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
@@ -102,6 +105,16 @@ def invert_score(num):
     else:
         pro_value = (num - 4) * 2
         return num - pro_value
+
+
+@app.before_first_request
+def before_first_request():
+    app.logger.info("Clean database!")
+    db.drop_all()
+    app.logger.info("Create database tables!")
+    db.create_all()
+    write_questions_to_db()
+    app.logger.info("Questions loaded into database")
 
 
 @app.route('/questions')
@@ -174,8 +187,8 @@ def retrieve_result():
     return {'result': user.result.to_json()}
 
 
-if __name__ == '__main__':
-    db.drop_all()
-    db.create_all()
-    write_questions_to_db()
-    app.run()
+# if __name__ == '__main__':
+#     db.drop_all()
+#     db.create_all()
+#     write_questions_to_db()
+#     app.run()
