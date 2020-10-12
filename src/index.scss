@@ -139,7 +139,8 @@ body {
   }
 
   .perspectives {
-    width: 40%;
+    flex: 1;
+    max-width: 55%;
   }
 }
 
