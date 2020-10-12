@@ -18,7 +18,7 @@ const Email = ({ updateEmail }: EmailProps) => {
       <div className="radios-container">
         <input
           className="text-input"
-          type="textbox"
+          type="email"
           placeholder="you@example.com"
           onChange={handleInputChange}
         />

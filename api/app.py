@@ -1,6 +1,7 @@
 import time
 import csv
 import json
+import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
@@ -8,6 +9,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+APP_ROOT = os.path.realpath(os.path.dirname(__file__))
 
 
 class Question(db.Model):
@@ -80,7 +82,8 @@ class Result(db.Model):
 
 
 def write_questions_to_db():
-    with open('api/Data/Questions.csv') as csv_file:
+    questions_path = os.path.join(APP_ROOT, "Data", "Questions.csv")
+    with open(questions_path) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
@@ -104,10 +107,20 @@ def invert_score(num):
         return num - pro_value
 
 
+@app.before_first_request
+def before_first_request():
+    app.logger.info("Clean database!")
+    db.drop_all()
+    app.logger.info("Create database tables!")
+    db.create_all()
+    write_questions_to_db()
+    app.logger.info("Questions loaded into database")
+
+
 @app.route('/questions')
 def get_questions():
     questions = db.session.query(Question).all()
-    return {'message': [x.to_json() for x in questions]}
+    return {'questions': [x.to_json() for x in questions]}
 
 
 @app.route('/answers', methods=['POST'])
@@ -122,8 +135,17 @@ def submit_answers():
     if not answers or len(answers) != num_of_question:
         return jsonify(message='Answers are incomplete'), 400
 
-    user = User(email=email)
-    db.session.add(user)
+    user = db.session.query(User).filter_by(email=email).first()
+    if not user:
+        user = User(email=email)
+        db.session.add(user)
+    else:
+        db.session.query(Result).filter_by(id=user.result.id).delete()
+        [
+            db.session.query(Answer).filter_by(id=answer.id).delete()
+            for answer in user.answers
+        ]
+
     result = {}
     for answer in answers:
         question = db.session.query(Question).filter_by(
@@ -172,10 +194,3 @@ def retrieve_result():
         return jsonify(message=f'Result not found for user: {email}'), 404
 
     return {'result': user.result.to_json()}
-
-
-if __name__ == '__main__':
-    db.drop_all()
-    db.create_all()
-    write_questions_to_db()
-    app.run()
