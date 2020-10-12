@@ -1,6 +1,6 @@
 # Running the app
 
-The solution I provided uses Javascript/React for frontend and Python/Flask for backend. I also used SQLite file for the database while using SQLAlchemy as the ORM for acessing the database.
+The solution I provided uses Javascript/React for frontend and Python/Flask for backend. I also used SQLite file for the database while using SQLAlchemy as the ORM for acessing the database. The basic requirements that are needed to be installed which I didn't provide instruction for are python3 and node.
 
 ## Setting up the backend
 
