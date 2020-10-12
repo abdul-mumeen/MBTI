@@ -120,7 +120,7 @@ def before_first_request():
 @app.route('/questions')
 def get_questions():
     questions = db.session.query(Question).all()
-    return {'message': [x.to_json() for x in questions]}
+    return {'questions': [x.to_json() for x in questions]}
 
 
 @app.route('/answers', methods=['POST'])

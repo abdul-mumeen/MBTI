@@ -13,8 +13,8 @@ const Perspective = ({ left, right, result }: PerspectiveProps) => {
     <div className="perspective">
       <span>{left}</span>
       <div className="perpective-image">
-        <div className={result === 1 ? "purple" : "gray"}></div>
-        <div className={result === 1 ? "gray" : "purple"}></div>
+        <div className={result === 0 ? "purple" : "gray"}></div>
+        <div className={result === 0 ? "gray" : "purple"}></div>
       </div>
       <span>{right}</span>
     </div>
