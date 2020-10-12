@@ -11,7 +11,6 @@ interface QuestionProps {
 const Question = ({ questionKey, updateValue, question }: QuestionProps) => {
   const radios = [1, 2, 3, 4, 5, 6, 7];
   const handleOptionChange = (event: any) => {
-    console.log(event.target.value);
     updateValue(questionKey, event.target.value);
   };
   return (

@@ -1,23 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { camelizeKeys, decamelizeKeys } from "humps";
 import { useHistory } from "react-router-dom";
 
 import QuestionContainer from "./QuestionContainer";
 import QuestionComponent from "./Question";
 import Email from "./Email";
-import { Answer, AnswersData, Result, Question } from "./types";
-import {
-  fetchQuestions,
-  fetchQuestionsError,
-  fetchResult,
-  fetchResultError,
-  postAnswers,
-  postAnswersError,
-  updateQuestions,
-  updateResult,
-} from "./actions";
+import { AnswersData } from "./types";
 import { StoreState } from "./store";
+import { getQuestions, postUsersAnswers } from "./helper";
 import "./index.scss";
 
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -31,20 +21,8 @@ const QuestionsPage = () => {
   const history = useHistory();
 
   useEffect(() => {
-    dispatch(fetchQuestions());
-    fetch("/questions").then(async (response) => {
-      try {
-        const data = await response.json();
-        dispatch(
-          updateQuestions(
-            data.questions.map((question: any) => camelizeKeys(question))
-          )
-        );
-      } catch {
-        dispatch(fetchQuestionsError());
-      }
-    });
-  }, []);
+    getQuestions(dispatch);
+  }, [dispatch]);
 
   const handleDataUpdate = (key: string, value: number) => {
     setErrorMessage("");
@@ -83,27 +61,7 @@ const QuestionsPage = () => {
       return;
     }
 
-    dispatch(postAnswers());
-    fetch("/answers", {
-      method: "POST",
-      body: JSON.stringify({
-        answers: Object.values(answersData).map((answer) =>
-          decamelizeKeys(answer)
-        ),
-        email: email,
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    }).then(async (response) => {
-      try {
-        const data = await response.json();
-        dispatch(updateResult(data.result));
-        history.push("/result");
-      } catch {
-        dispatch(postAnswersError());
-      }
-    });
+    postUsersAnswers(dispatch, email, answersData, history);
   };
 
   return (

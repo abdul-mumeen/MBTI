@@ -37,7 +37,7 @@ export interface AnswersData {
 
 export interface Store {
   questions: AsyncStoreState<Question[]>;
-  result: AsyncStoreState<Result | null>;
+  result: AsyncStoreState<Result | undefined>;
   answers: AsyncActionStatus;
 }
 
@@ -47,7 +47,7 @@ export const InitialState = {
     status: AsyncActionStatus.Unknown,
   },
   result: {
-    data: null,
+    data: undefined,
     status: AsyncActionStatus.Unknown,
   },
   answers: AsyncActionStatus.Unknown,
