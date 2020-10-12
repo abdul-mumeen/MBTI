@@ -16,13 +16,13 @@ body {
   margin-bottom: 3rem;
 
   p {
-    font-size: 18px;
+    font-size: 1.1rem;
     font-weight: 500;
     color: #113264;
   }
 
   span {
-    font-size: 16px;
+    font-size: 1rem;
     color: #495057;
   }
 }
@@ -37,6 +37,19 @@ body {
     width: 740px;
     margin-bottom: 3rem;
   }
+
+  .error {
+    color: red;
+    margin-bottom: 0.5rem;
+  }
+
+  .error.hide {
+    display: none;
+  }
+
+  .error.show {
+    display: block;
+  }
 }
 
 .radios-container {
@@ -47,7 +60,7 @@ body {
   span {
     font-family: Nunito;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 0.9rem;
   }
 
   span:first-child {
@@ -66,7 +79,7 @@ body {
     border-radius: 4px;
     font-family: Nunito;
     font-style: normal;
-    font-size: 18px;
+    font-size: 1.1rem;
     padding-left: 1rem;
   }
 }
@@ -80,7 +93,7 @@ body {
 
   span {
     font-family: Nunito;
-    font-size: 18px;
+    font-size: 1.1rem;
     text-align: center;
     font-weight: bold;
     color: #495057;
@@ -94,7 +107,7 @@ body {
   background: #3d59fa;
   border-radius: 3px;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 1rem;
   text-align: center;
   color: #fff;
 }
@@ -113,14 +126,14 @@ body {
 
     div {
       font-weight: 500;
-      font-size: 26px;
+      font-size: 1.6rem;
       margin-bottom: 1.2rem;
       color: #113264;
     }
 
     span {
       font-weight: 500;
-      font-size: 16px;
+      font-size: 1rem;
       color: #343a40;
     }
   }
@@ -138,7 +151,7 @@ body {
 
   span {
     font-weight: 500;
-    font-size: 14px;
+    font-size: 0.9rem;
     color: #878787;
     width: 25%;
   }

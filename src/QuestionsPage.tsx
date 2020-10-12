@@ -5,11 +5,28 @@ import Question from "./Question";
 import Email from "./Email";
 
 import "./index.scss";
-import { idText } from "typescript";
+
+interface Answer {
+  questionId: number;
+  answer: number;
+}
+
+interface AnswersData {
+  [questionId: string]: Answer;
+}
+
+interface Question {
+  questionId: number;
+  question: string;
+}
+
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const QuestionsPage = () => {
   const [questions, setQuestions] = useState<any[]>([]);
-  const [data, setData] = useState<any>({});
+  const [answersData, setAnswersData] = useState<AnswersData>({});
+  const [email, setEmail] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
     fetch("/questions").then(async (response) => {
@@ -43,17 +60,43 @@ const QuestionsPage = () => {
     { name: "JP", left: "Judging (J)", right: "Perceiving (P)" },
   ];
 
-  const handleDataUpdate = (key: string, value: string | number) => {
-    const newData = { ...data, [key]: value };
-    setData(newData);
+  const handleDataUpdate = (key: string, value: number) => {
+    setErrorMessage("");
+    const newData: AnswersData = {
+      ...answersData,
+      [key]: { questionId: parseInt(key), answer: value },
+    };
+    setAnswersData(newData);
   };
 
   const handleEmailUpdate = (value: string) => {
-    handleDataUpdate("email", value);
+    setErrorMessage("");
+    setEmail(value);
+  };
+
+  const isAnswerIncomplete = () => {
+    for (const question of questions) {
+      if (answersData[question.question_id.toString()] === undefined) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const isEmailInvalid = () => {
+    return !emailRegex.test(email);
   };
 
   const handleSubmit = () => {
-    console.log("Current data", data);
+    if (isAnswerIncomplete()) {
+      setErrorMessage("All questions must be answered!");
+      return;
+    }
+    if (isEmailInvalid()) {
+      setErrorMessage("Enter a valid Email Address!");
+      return;
+    }
+    console.log("Current data", answersData);
   };
 
   return (
@@ -70,7 +113,7 @@ const QuestionsPage = () => {
           {questions.map((question, index) => (
             <QuestionContainer key={index + 1}>
               <Question
-                questionKey={question.id.toString()}
+                questionKey={question.question_id.toString()}
                 updateValue={handleDataUpdate}
                 question={question.question}
               />
@@ -79,6 +122,9 @@ const QuestionsPage = () => {
           <QuestionContainer>
             <Email updateEmail={handleEmailUpdate} />
           </QuestionContainer>
+        </div>
+        <div className={!!errorMessage ? "error show" : "error hide"}>
+          {errorMessage}
         </div>
         <button className="save-button" onClick={handleSubmit}>
           {"Save & Continue"}
